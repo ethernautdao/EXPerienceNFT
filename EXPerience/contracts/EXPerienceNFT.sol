@@ -11,7 +11,7 @@ import "./libs/EthernautFactory.sol";
  * Requirement:
  *  - Mintable NFT, nontransferable capable of reading and displaying how many EXP tokens you have in your wallet
  *  - Create a fully on-chain generative ASCII art showing numbers from 1 to 100
- *  - All mints start with the number 0
+ *  - All mints start with the number 1
  *  - The number shown by the NFT must reflect the EXP balance of the owner on the NFT
  *  - Transfer capabilities must be disabled after minting (soulbound)
  * @author SolDev-HP (https://github.com/SolDev-HP)
@@ -51,9 +51,13 @@ contract EXPerienceNFT is ERC721, Ownable {
     //////////////////////////////////////////////////////////////*/
 
     /// @param _EXPContractAddress address where EXP ERC20 Token is deployed
-    constructor(address _EXPContractAddress) ERC721("EXPerienceNFT", "EXP") {
+    constructor(address _owner, address _EXPContractAddress)
+        ERC721("EXPerienceNFT", "EXP")
+    {
         // Set EXP Contract address
         EXPContractAddress = _EXPContractAddress;
+
+        transferOwnership(_owner);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -85,16 +89,13 @@ contract EXPerienceNFT is ERC721, Ownable {
             revert OnlyOnePerAddress();
         }
 
-        // Get TokenID
-        uint256 tokenId = totalSupply;
-
-        // Increment for next tokenID
+        // Increment first so that we can use totalSupply as tokenId
         unchecked {
             ++totalSupply;
         }
 
         // Mint the EXPerience NFT for the address
-        _safeMint(msg.sender, tokenId);
+        _safeMint(msg.sender, totalSupply);
     }
 
     /// @notice ASCII art generator
