@@ -5,9 +5,6 @@
 Install Foundry: https://book.getfoundry.sh/getting-started/installation
 
 ```sh
-# install dependencies
-git submodule update --init --recursive
-
 # build
 forge build
 
