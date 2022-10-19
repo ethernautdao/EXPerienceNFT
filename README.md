@@ -1,11 +1,46 @@
 # ReadMe tailored towards deploying EXPerienceNFT to Optimism mainnet/kovan/goerli testnets
 
+## Instructions for Foundry
+
+Install Foundry: https://book.getfoundry.sh/getting-started/installation
+
+```sh
+# install dependencies
+git submodule update --init --recursive
+
+# build
+forge build
+
+# test
+forge test
+```
+
+In order to deploy:
+
+```sh
+cp .env.example .env
+
+# generate a private key and deployer address
+cast wallet new
+
+# set PRIVATE_KEY and the other properties in .env
+# fund the deployer address
+
+# do a dry run
+forge script scripts/Deploy.s.sol --rpc-url ...
+
+# actually deploy
+forge script scripts/Deploy.s.sol --rpc-url ... --broadcast --verify
+```
+
+## Original Instructions for Brownie
+
 EXP(ERC20): https://goerli-optimism.etherscan.io/address/0x1508363a85fc6e0b22ad704ce2206a8c150f492c
 EXP(NFT): https://goerli-optimism.etherscan.io/address/0x17402a30b81A99F33db5eD2a116CF2325797b72E
 Quixotic: https://testnet.qx.app/collection/0x17402a30b81A99F33db5eD2a116CF2325797b72E
 
-- Clone this repo 
-- Make sure you get dev/for_optimism_deployment branch 
+- Clone this repo
+- Make sure you get dev/for_optimism_deployment branch
 ```
 https://github.com/SolDev-HP/EXPerience_Game.git
 ```
@@ -17,7 +52,7 @@ python -m venv .venv
 
 - Activate your virtual environment
 ```
-python ./.venv/scripts/activate 
+python ./.venv/scripts/activate
 ```
 
 - Install dependencies, this will install eth-brownie, dotenv-python, cython, and other required packages
@@ -25,7 +60,7 @@ python ./.venv/scripts/activate
 pip install -r requirements.txt
 ```
 
-- Change into project directory 
+- Change into project directory
 ```
 cd EXPerience
 ```
@@ -36,7 +71,7 @@ cp .env.example .env
 ```
 
 - [For local Development]
-- If you're using local ganache-cli for deployment, make sure you update following variables inorder for deployement script to run and deploy required contracts 
+- If you're using local ganache-cli for deployment, make sure you update following variables inorder for deployement script to run and deploy required contracts
 
 ```
 DEV_SADMIM_PUB = ""
@@ -69,7 +104,7 @@ OPT_ADMIN2_PRIV = ""    // Optional
 OPT_EXP_TOKEN_CONTRACT = "" // EXPToken contract address on Optimism mainnet
 ```
 
-- We are using OpenZeppelin and API3 packages within brownie, hence once inside the token directory, install brownie packages using following commands 
+- We are using OpenZeppelin and API3 packages within brownie, hence once inside the token directory, install brownie packages using following commands
 ```
 brownie pm install OpenZeppelin/openzeppelin-contracts@4.7.3    (required)
 brownie pm install api3dao/airnode@0.6.3                        (optional)
@@ -81,7 +116,7 @@ brownie pm install api3dao/airnode@0.6.3                        (optional)
 
 - Compile the project
 ```
-brownie compile 
+brownie compile
 OR
 brownie compile --size (to view contract sizes after compiling)
 ```
@@ -89,7 +124,7 @@ brownie compile --size (to view contract sizes after compiling)
 ### [Deploying on Optimism Kovan/Goerli testnet or mainnet]
 
 - Make sure you have optimism related networks added to the brownie's network list
-(Note: I am using Infura as my node provider, incase Alchemy, the network adding part in brownie remains the same) 
+(Note: I am using Infura as my node provider, incase Alchemy, the network adding part in brownie remains the same)
 
 ```
 > brownie networks list
@@ -117,14 +152,14 @@ Optimism
 > brownie networks add Optimism optimism-goerli host=host_url chainid=420
 ```
 
-- Run following command to deploy on optimism testnet 
+- Run following command to deploy on optimism testnet
 ```
 > brownie run ./scripts/deploy_goerli_all.py --network optimism-kovan/goerli
 ```
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Contracts folder structure and files details 
+# Contracts folder structure and files details
 ```
 EXPerience/contracts/.
 |
@@ -147,8 +182,8 @@ EXPerience/contracts/.
         |  42842e0e  =>  safeTransferFrom(address,address,uint256)
 ________|  b88d4fde  =>  safeTransferFrom(address,address,uint256,bytes)
 |
-├───[ EXPToken.sol ]                  
-|   // EXP Token (ERC20) contract. 
+├───[ EXPToken.sol ]
+|   // EXP Token (ERC20) contract.
 |   // Deployment address of this should be passed as arg while deploying EXPerience NFT contract
 │
 ├───interfaces
@@ -156,7 +191,7 @@ ________|  b88d4fde  =>  safeTransferFrom(address,address,uint256,bytes)
 │   │
 │   └───extensions                // ignore for now
 ├───kb_contracts                  // ignore for now
-├───libs  
+├───libs
 │       BadgeFactory.sol          // Badge SVG generator factory. TokenURI generation logic (onchain)
 │       EthernautFactory.sol      // Ethernaut SVG generator factory. TokenURI generation logic (svg code from aleta in EthernauDAO)
 │
@@ -173,7 +208,7 @@ ________|  b88d4fde  =>  safeTransferFrom(address,address,uint256,bytes)
 <details>
   <summary>  SoulBound (NonTx) - ERC20 + ERC721 - EXPerienceNFT - Bounty on EthernautDAO </summary>
 
-## Current deployments 
+## Current deployments
 EXPToken (Rinkeby) = https://rinkeby.etherscan.io/address/0xaF88F460053af481d49B4Db70Bf26a613b9c2372
 
 EXPerienceNFT (Rinkeby) = https://rinkeby.etherscan.io/address/0xEF54196aC12356C17F77B6d19dF44a059F4fAbB9
@@ -183,51 +218,51 @@ OpenSea = https://testnets.opensea.io/collection/experience-nft-hb2vqfzqks
 Rarible = https://rinkeby.rarible.com/collection/0xef54196ac12356c17f77b6d19df44a059f4fabb9/items
 
 ## Bounty Details (Bounty 1 - Soulbound ERC20)
-### Soulbound ERC20 
-- Implement a setApprovedMinter(address, bool) onlyOwner function 
+### Soulbound ERC20
+- Implement a setApprovedMinter(address, bool) onlyOwner function
 - No limit on total supply
 - Transfer capabilities must be disabled after minting (soulbound)
 
 - Files have been updated to change EXPtoken to my own take that I was working under EXPerienceGame repo
-- Current Soulbound implementation also supports API3's QRNG implementation of random numbers 
+- Current Soulbound implementation also supports API3's QRNG implementation of random numbers
 
 ## Bounty Details (Bounty 2 - Soulbound ERC721)
-### Soulbound ERC721 
+### Soulbound ERC721
 
 - Mintable NFT, nontransferable capable of reading and displaying how many EXP tokens you have in your wallet
 - Create a fully on-chain generative ASCII art showing numbers from 1 to 100
 - All mints start with the number 0
 - The number shown by the NFT must reflect the EXP balance of the owner on the NFT
-- Transfer capabilities must be disabled after minting (soulbound) 
+- Transfer capabilities must be disabled after minting (soulbound)
 </details>
 
 <details>
 <summary> Test and deployment information (old) </summary>
 
 This script performs following steps:
-1. Deploys EXPerience NFT contract 
-2. Demonstrates how set admin works 
-3. Demonstrate how NFT minting works 
+1. Deploys EXPerience NFT contract
+2. Demonstrates how set admin works
+3. Demonstrate how NFT minting works
 
 - Another script is deployall, this script performs following operations
 ```
 brownie run .\scripts\deployall_rinkeby.py --network rinkeby
 ```
 
-1. Gets admin account, second admin, holders, qrng airnode address from the env file 
-2. Deploy EXPToken contract 
+1. Gets admin account, second admin, holders, qrng airnode address from the env file
+2. Deploy EXPToken contract
 3. Ask user to generate sponsor wallet using derive-sponsor-wallet-address
-4. Set request parameters for airnode rrp 
-5. set token admin 
+4. Set request parameters for airnode rrp
+5. set token admin
 6. Gain experience for holders (x5)
-7. Request a random number experience for a holder 
-8. Deploy EXPerienceNFT contract using EXPToken contract address 
+7. Request a random number experience for a holder
+8. Deploy EXPerienceNFT contract using EXPToken contract address
 9. Set token admin
-10. Generate NFT for the players 
+10. Generate NFT for the players
 </details>
 
 <details>
-<summary> Rinkeby/Goerli deployments and logs </summary> 
+<summary> Rinkeby/Goerli deployments and logs </summary>
 
 - Verify you have .env prepared and above steps followed.
 
@@ -237,7 +272,7 @@ Brownie v1.16.4 - Python development framework for Ethereum
 
 ExperienceProject is the active project.
 
-// EXPToken contract is getting deployed here 
+// EXPToken contract is getting deployed here
 
 Running 'scripts\deployall_rinkeby.py::main'...
 Transaction sent: 0xc1301bac132fae1c684c5c36d1810a225dd432f79b55723ffd246d360cd65529
@@ -245,8 +280,8 @@ Transaction sent: 0xc1301bac132fae1c684c5c36d1810a225dd432f79b55723ffd246d360cd6
   EXPToken.constructor confirmed   Block: 10801610   Gas used: 1041273 (90.91%)
   EXPToken deployed at: 0xaF88F460053af481d49B4Db70Bf26a613b9c2372
 
-// Once EXPToken contract is deployed, we can now generate sponsor wallet 
-// We do this by requesting derive-sponsor-wallet-address from airnode-admin utils from api3 
+// Once EXPToken contract is deployed, we can now generate sponsor wallet
+// We do this by requesting derive-sponsor-wallet-address from airnode-admin utils from api3
 
 Execute this in other teaminal, and save result for the next input box.
 npx @api3/airnode-admin derive-sponsor-wallet-address --airnode-xpub xpub6DXSDTZBd4aPVXnv6Q3SmnGUweFv6j24SK77W4qrSFuhGgi666awUiXakjXruUSCDQhhctVG7AQt67gMdaRAsDnDXv23bBRKsMWvRzo6kbf --airnode-address 0x9d3C147cA16DB954873A498e0af5852AB39139f2 --sponsor-address 0xaF88F460053af481d49B4Db70Bf26a613b9c2372
@@ -267,7 +302,7 @@ Transaction sent: 0xe6942d6d2f26e45d3b1443862151b68f0733d033d949352d909dba0287a9
   EXPToken.setRequestParameters confirmed   Block: 10801612   Gas used: 91405 (90.91%)
 
 // Set token admin for EXPToken
-// And perform basic EXP Token distribution 
+// And perform basic EXP Token distribution
 
 Transaction sent: 0xa9fae3f6bf6fc074e6f8305f41af6a2b11d4a7979293657f42d8dfa1b1c36d9a
   Gas price: 1.499999991 gwei   Gas limit: 53054   Nonce: 261
@@ -301,14 +336,14 @@ Transaction sent: 0x74c239354d1d9e48b390e385f053eddefb75000e57758226614a448a81eb
   Gas price: 1.499999991 gwei   Gas limit: 59259   Nonce: 102
   EXPToken.gainExperience confirmed   Block: 10801620   Gas used: 53872 (90.91%)
 
-// Request a random uint256 number from API3 QRNG airnode 
+// Request a random uint256 number from API3 QRNG airnode
 
 Transaction sent: 0xd590d3efa640721aa4d2f72227c59dfb2bff25026f7c541c42403b7ad434bbd4
   Gas price: 1.499999991 gwei   Gas limit: 126890   Nonce: 265
   EXPToken.requestRandomEXPerienceForPlayer confirmed   Block: 10801621   Gas used: 115355 (90.91%)
 
 
-// EXPerienceNFT Contract deployed 
+// EXPerienceNFT Contract deployed
 // Perform basic NFT distributions
 
 Verify that the transaction went through. Wait for randomness fulfillment to occur. And then Press any key to continue...
@@ -317,9 +352,9 @@ Transaction sent: 0x28260cd8633e34af5ff914c8429f61b7b60e5b3309028dc8bee4a5c52692
   EXPerienceNFT.constructor confirmed   Block: 10801623   Gas used: 5477734 (90.91%)
   EXPerienceNFT deployed at: 0xEF54196aC12356C17F77B6d19dF44a059F4fAbB9
 
-// Basic NFT distribution 
-// Users already hold EXP tokens now so NFT will be able to display their 
-// levels denoted by EXPToken balance 
+// Basic NFT distribution
+// Users already hold EXP tokens now so NFT will be able to display their
+// levels denoted by EXPToken balance
 
 Transaction sent: 0x15309b3c8e6b4784867b2d60ca5117150eaad6fba0cad11c6168f1e6593815dd
   Gas price: 1.499999991 gwei   Gas limit: 52684   Nonce: 267
@@ -413,7 +448,7 @@ Unit tests status
 tests\test_EXPToken_contract.py ................                                         [ 84%]
 tests\test_EXPerienceNFT_contract.py ...                                                 [100%]
 
-========================================== Coverage =========================================== 
+========================================== Coverage ===========================================
 
   contract: EXPerienceNFT - 28.2%
     EXPerienceNFT.generateExperienceNFT - 100.0%
@@ -427,10 +462,10 @@ tests\test_EXPerienceNFT_contract.py ...                                        
 
 Coverage report saved at .\EXPerience\reports\coverage.json
 View the report using the Brownie GUI
-======================================= 19 passed 24.68s ====================================== 
+======================================= 19 passed 24.68s ======================================
 
-// Weeeeellll... Noooiiicceeeeeee.. 
-// Further interactions can be done using 
+// Weeeeellll... Noooiiicceeeeeee..
+// Further interactions can be done using
 brownie console --network [rinkeby/ropsten/development]
 
 ```
