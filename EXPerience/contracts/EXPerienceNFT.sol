@@ -52,7 +52,7 @@ contract EXPerienceNFT is ERC721, Ownable {
 
     /// @param _EXPContractAddress address where EXP ERC20 Token is deployed
     constructor(address _owner, address _EXPContractAddress)
-        ERC721("EXPerienceNFT", "EXP")
+        ERC721("EXPerienceNFT", "EXPNFT")
     {
         // Set EXP Contract address
         EXPContractAddress = _EXPContractAddress;
