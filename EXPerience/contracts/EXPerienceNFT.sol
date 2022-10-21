@@ -91,11 +91,8 @@ contract EXPerienceNFT is ERC721, Ownable {
 
         // Increment first so that we can use totalSupply as tokenId
         unchecked {
-            ++totalSupply;
+            _safeMint(msg.sender, ++totalSupply);
         }
-
-        // Mint the EXPerience NFT for the address
-        _safeMint(msg.sender, totalSupply);
     }
 
     /// @notice ASCII art generator
