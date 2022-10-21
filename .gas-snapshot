@@ -1,0 +1,7 @@
+EXPerienceNFTTest:testAnyoneCanMint() (gas: 135945)
+EXPerienceNFTTest:testCanCallTokenURI() (gas: 2934031)
+EXPerienceNFTTest:testCanNotCallTokenURIIfTokenIdDoesNotExist() (gas: 83949)
+EXPerienceNFTTest:testCanNotTransfer() (gas: 88758)
+EXPerienceNFTTest:testCanOnlyMintOnce() (gas: 82309)
+EXPerienceNFTTest:testNonOwnerCannotChangeEXPContractAddress() (gas: 13337)
+EXPerienceNFTTest:testOwnerCanChangeEXPContractAddress() (gas: 21569)
