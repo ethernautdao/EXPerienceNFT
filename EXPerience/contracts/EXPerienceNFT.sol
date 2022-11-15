@@ -40,6 +40,11 @@ contract EXPerienceNFT is ERC721, Ownable {
 
     event EXPTokenContractAddressChange(address indexed _changedToAddress);
 
+    event RendererUpdated(
+        address indexed oldRenderer,
+        address indexed newRenderer
+    );
+
     // Error to indicate that action can only be performed by token admins
     error OnlyOnePerAddress();
 
@@ -79,6 +84,16 @@ contract EXPerienceNFT is ERC721, Ownable {
 
         // Emit the event that contract address has been changed
         emit EXPTokenContractAddressChange(changeTo);
+    }
+
+    function setRenderer(address _renderer) public onlyOwner {
+        if (_renderer == address(0)) {
+            revert InvalidAddress();
+        }
+
+        emit RendererUpdated(address(renderer), _renderer);
+
+        renderer = IRenderer(_renderer);
     }
 
     /*//////////////////////////////////////////////////////////////
