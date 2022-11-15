@@ -3,6 +3,7 @@ pragma solidity >=0.8.0;
 
 import {Test} from "forge-std/Test.sol";
 import {EXPerienceNFT} from "src/EXPerienceNFT.sol";
+import {EXPerienceRenderer} from "src/libs/EXPerienceRenderer.sol";
 
 contract MockEXP {
     function balanceOf(address) public pure returns (uint256) {
@@ -24,10 +25,16 @@ contract EXPerienceNFTTest is Test {
 
     EXPerienceNFT nftContract;
     MockEXP expContract;
+    EXPerienceRenderer renderer;
 
     function setUp() public {
         expContract = new MockEXP();
-        nftContract = new EXPerienceNFT(owner, address(expContract));
+        renderer = new EXPerienceRenderer();
+        nftContract = new EXPerienceNFT(
+            owner,
+            address(expContract),
+            address(renderer)
+        );
     }
 
     function testNonOwnerCannotChangeEXPContractAddress() public {
@@ -96,7 +103,7 @@ contract EXPerienceNFTTest is Test {
         vm.prank(alice);
         nftContract.mint();
 
-        vm.expectRevert("Invalid TokenID");
+        vm.expectRevert("ERC721: invalid token ID");
         nftContract.tokenURI(0);
     }
 }

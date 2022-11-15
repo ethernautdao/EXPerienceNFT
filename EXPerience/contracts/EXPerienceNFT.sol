@@ -4,7 +4,8 @@ pragma solidity >=0.8.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./libs/EthernautFactory.sol";
+
+import {IRenderer} from "./interfaces/IRenderer.sol";
 
 /**
  * @title Soulbound ERC721 implementation - named EXPerienceNFT
@@ -31,6 +32,8 @@ contract EXPerienceNFT is ERC721, Ownable {
     // grab balance when generating NFT
     address public EXPContractAddress;
 
+    IRenderer public renderer;
+
     /*//////////////////////////////////////////////////////////////
                             ERRORS / EVENTS
     //////////////////////////////////////////////////////////////*/
@@ -51,12 +54,13 @@ contract EXPerienceNFT is ERC721, Ownable {
     //////////////////////////////////////////////////////////////*/
 
     /// @param _EXPContractAddress address where EXP ERC20 Token is deployed
-    constructor(address _owner, address _EXPContractAddress)
-        ERC721("EXPerienceNFT", "EXPNFT")
-    {
-        // Set EXP Contract address
+    constructor(
+        address _owner,
+        address _EXPContractAddress,
+        address _renderer
+    ) ERC721("EXPerienceNFT", "EXPNFT") {
         EXPContractAddress = _EXPContractAddress;
-
+        renderer = IRenderer(_renderer);
         transferOwnership(_owner);
     }
 
@@ -102,17 +106,15 @@ contract EXPerienceNFT is ERC721, Ownable {
         override
         returns (string memory)
     {
-        // Make sure tokenId is valid
-        require(_exists(tokenId), "Invalid TokenID");
-
-        // Get the owner of the tokenId
+        // reverts if token does not exist
         address tokenOwner = ownerOf(tokenId);
 
-        // Get owner's EXP token holdings
-        uint256 ownerBal = IERC20(EXPContractAddress).balanceOf(tokenOwner);
-
         return
-            EthernautFactory._generateTokenURI(tokenId, ownerBal, tokenOwner);
+            renderer.render(
+                tokenId,
+                IERC20(EXPContractAddress).balanceOf(tokenOwner),
+                tokenOwner
+            );
     }
 
     /*//////////////////////////////////////////////////////////////
