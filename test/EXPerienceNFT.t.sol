@@ -4,10 +4,21 @@ pragma solidity >=0.8.0;
 import {Test} from "forge-std/Test.sol";
 import {EXPerienceNFT} from "src/EXPerienceNFT.sol";
 import {EXPerienceRenderer} from "src/libs/EXPerienceRenderer.sol";
+import {IRenderer} from "src/interfaces/IRenderer.sol";
 
 contract MockEXP {
     function balanceOf(address) public pure returns (uint256) {
         return 42;
+    }
+}
+
+contract MockRenderer is IRenderer {
+    function render(
+        uint256 tokenId,
+        uint256 ownerBalance,
+        address tokenOwner
+    ) external pure override returns (string memory) {
+        return "beep boop";
     }
 }
 
@@ -19,6 +30,11 @@ contract EXPerienceNFTTest is Test {
         uint256 indexed tokenId
     );
 
+    event RendererUpdated(
+        address indexed oldRenderer,
+        address indexed newRenderer
+    );
+
     address owner = makeAddr("owner");
     address alice = makeAddr("alice");
     address bob = makeAddr("bob");
@@ -26,6 +42,7 @@ contract EXPerienceNFTTest is Test {
     EXPerienceNFT nftContract;
     MockEXP expContract;
     EXPerienceRenderer renderer;
+    address mockRenderer = address(new MockRenderer());
 
     function setUp() public {
         expContract = new MockEXP();
@@ -50,6 +67,30 @@ contract EXPerienceNFTTest is Test {
         nftContract.changeEXPTokenAddress(newAddr);
 
         assertEq(nftContract.EXPContractAddress(), newAddr);
+    }
+
+    function testNonOwnerCannotChangeRenderer() public {
+        vm.prank(bob);
+        vm.expectRevert("Ownable: caller is not the owner");
+        nftContract.setRenderer(bob);
+    }
+
+    function testOwnerCanChangeRenderer() public {
+        // setting the render emits the expected event
+        vm.expectEmit(true, true, true, true);
+        emit RendererUpdated(address(renderer), mockRenderer);
+
+        vm.prank(owner);
+        nftContract.setRenderer(mockRenderer);
+
+        // the renderer is reflected in the getter
+        assertEq(address(nftContract.renderer()), address(mockRenderer));
+
+        vm.prank(alice);
+        nftContract.mint();
+
+        // the new renderer is active
+        assertEq(nftContract.tokenURI(1), "beep boop");
     }
 
     function testAnyoneCanMint() public {
