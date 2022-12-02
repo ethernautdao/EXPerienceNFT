@@ -238,6 +238,9 @@ contract EXPerienceRenderer is IRenderer {
         uint256 ownerBalance,
         address tokenOwner
     ) external pure override returns (string memory tokenURI) {
+        // cap ownerBalance at 99 tokens
+        if(ownerBalance > 99 ether) ownerBalance = 99 ether;
+
         // ownerBalance going beyond expected values. As it's uint256, need to dial it down to 18 decimal
         // This will always result in 0 for every player that has sub-1 EXP
         // To solve this, we can increase our allow level. For example, just to be considered, have atleast 0.01 EXP or something

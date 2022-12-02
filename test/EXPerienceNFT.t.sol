@@ -8,32 +8,27 @@ import {IRenderer} from "src/interfaces/IRenderer.sol";
 
 contract MockEXP {
     function balanceOf(address) public pure returns (uint256) {
-        return 42;
+        // balance is above 99 EXP, so rendered SVG should display 99
+        return 102 ether;
     }
 }
 
 contract MockRenderer is IRenderer {
-    function render(
-        uint256 tokenId,
-        uint256 ownerBalance,
-        address tokenOwner
-    ) external pure override returns (string memory) {
+    function render(uint256 tokenId, uint256 ownerBalance, address tokenOwner)
+        external
+        pure
+        override
+        returns (string memory)
+    {
         return "beep boop";
     }
 }
 
 contract EXPerienceNFTTest is Test {
     // from IERC721
-    event Transfer(
-        address indexed from,
-        address indexed to,
-        uint256 indexed tokenId
-    );
+    event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
 
-    event RendererUpdated(
-        address indexed oldRenderer,
-        address indexed newRenderer
-    );
+    event RendererUpdated(address indexed oldRenderer, address indexed newRenderer);
 
     address owner = makeAddr("owner");
     address alice = makeAddr("alice");
@@ -138,6 +133,8 @@ contract EXPerienceNFTTest is Test {
 
         string memory tokenURI = nftContract.tokenURI(1);
         assertGt(bytes(tokenURI).length, 0);
+
+        // generated svg: https://codepen.io/beskay/pen/yLEQLJK
     }
 
     function testCanNotCallTokenURIIfTokenIdDoesNotExist() public {
